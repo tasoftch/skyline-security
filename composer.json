@@ -1,0 +1,24 @@
+{
+  "name": "tasoft/phpstorm-template",
+  "license": "MIT",
+  "minimum-stability": "dev",
+  "authors": [
+    {
+      "name": "Thomas Abplanalp",
+      "email": "info@tasoft.ch"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Skyline\\Security\\" : "src"
+    }
+  },
+  "require" : {
+    "php": "^7.2",
+    "symfony/security-csrf": "dev-master",
+    "skyline/kernel": "dev-master"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^6"
+  }
+}
