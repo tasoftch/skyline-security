@@ -32,14 +32,15 @@
  *
  */
 
-use Skyline\Kernel\Config\MainKernelConfig;
-use Skyline\Security\CSRF\CSRFTokenManager;
-use TASoft\Service\Config\AbstractFileConfiguration;
+namespace Skyline\Security\CSRF\TokenGenerator;
 
-return [
-    MainKernelConfig::CONFIG_SERVICES => [
-        "CSRFManager" => [
-            AbstractFileConfiguration::SERVICE_CLASS => CSRFTokenManager::class
-        ]
-    ]
-];
+
+interface TokenGeneratorInterface
+{
+    /**
+     * Generates a CSRF token.
+     *
+     * @return string The generated CSRF token
+     */
+    public function generateToken();
+}

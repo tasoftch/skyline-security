@@ -32,14 +32,39 @@
  *
  */
 
-use Skyline\Kernel\Config\MainKernelConfig;
-use Skyline\Security\CSRF\CSRFTokenManager;
-use TASoft\Service\Config\AbstractFileConfiguration;
+namespace Skyline\Security\CSRF\TokenStorage;
 
-return [
-    MainKernelConfig::CONFIG_SERVICES => [
-        "CSRFManager" => [
-            AbstractFileConfiguration::SERVICE_CLASS => CSRFTokenManager::class
-        ]
-    ]
-];
+
+use Skyline\Security\CSRF\Exception\TokenNotFoundException;
+
+interface TokenStorageInterface
+{
+    /**
+     * Reads a stored CSRF token.
+     *
+     * @return string The stored token
+     *
+     * @throws TokenNotFoundException If the token ID does not exist
+     */
+    public function getToken(string $tokenId);
+
+    /**
+     * Stores a CSRF token.
+     */
+    public function setToken(string $tokenId, string $token);
+
+    /**
+     * Removes a CSRF token.
+     *
+     * @return string|null Returns the removed token if one existed, NULL
+     *                     otherwise
+     */
+    public function removeToken(string $tokenId);
+
+    /**
+     * Checks whether a token with the given token ID exists.
+     *
+     * @return bool Whether a token exists with the given ID
+     */
+    public function hasToken(string $tokenId);
+}

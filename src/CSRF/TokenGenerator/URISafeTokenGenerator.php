@@ -32,11 +32,33 @@
  *
  */
 
-namespace Skyline\Security\CSRF;
+namespace Skyline\Security\CSRF\TokenGenerator;
 
 
-use Symfony\Component\Security\Csrf\CsrfTokenManager;
-
-class CSRFManager extends CsrfTokenManager
+class URISafeTokenGenerator implements TokenGeneratorInterface
 {
+    private $entropy;
+
+    /**
+     * Generates URI-safe CSRF tokens.
+     *
+     * @param int $entropy The amount of entropy collected for each token (in bits)
+     */
+    public function __construct(int $entropy = 256)
+    {
+        $this->entropy = $entropy;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function generateToken()
+    {
+        // Generate an URI safe base64 encoded string that does not contain "+",
+        // "/" or "=" which need to be URL encoded and make URLs unnecessarily
+        // longer.
+        $bytes = random_bytes($this->entropy / 8);
+
+        return rtrim(strtr(base64_encode($bytes), '+/', '-_'), '=');
+    }
 }

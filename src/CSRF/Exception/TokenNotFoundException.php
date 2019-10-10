@@ -32,14 +32,11 @@
  *
  */
 
-use Skyline\Kernel\Config\MainKernelConfig;
-use Skyline\Security\CSRF\CSRFTokenManager;
-use TASoft\Service\Config\AbstractFileConfiguration;
+namespace Skyline\Security\CSRF\Exception;
 
-return [
-    MainKernelConfig::CONFIG_SERVICES => [
-        "CSRFManager" => [
-            AbstractFileConfiguration::SERVICE_CLASS => CSRFTokenManager::class
-        ]
-    ]
-];
+
+use RuntimeException;
+
+class TokenNotFoundException extends RuntimeException
+{
+}

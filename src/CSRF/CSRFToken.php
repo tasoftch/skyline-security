@@ -32,14 +32,47 @@
  *
  */
 
-use Skyline\Kernel\Config\MainKernelConfig;
-use Skyline\Security\CSRF\CSRFTokenManager;
-use TASoft\Service\Config\AbstractFileConfiguration;
+namespace Skyline\Security\CSRF;
 
-return [
-    MainKernelConfig::CONFIG_SERVICES => [
-        "CSRFManager" => [
-            AbstractFileConfiguration::SERVICE_CLASS => CSRFTokenManager::class
-        ]
-    ]
-];
+
+class CSRFToken
+{
+    private $id;
+    private $value;
+
+    public function __construct(string $id, ?string $value)
+    {
+        $this->id = $id;
+        $this->value = $value ?? '';
+    }
+
+    /**
+     * Returns the ID of the CSRF token.
+     *
+     * @return string The token ID
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Returns the value of the CSRF token.
+     *
+     * @return string The token value
+     */
+    public function getValue()
+    {
+        return $this->value;
+    }
+
+    /**
+     * Returns the value of the CSRF token.
+     *
+     * @return string The token value
+     */
+    public function __toString()
+    {
+        return $this->value;
+    }
+}
