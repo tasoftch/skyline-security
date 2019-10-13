@@ -141,6 +141,8 @@ abstract class AbstractAuthenticationService implements AuthenticationServiceInt
                     $enc->addEncoder($specificPasswordEncoder instanceof EncoderFactoryInterface ? $specificPasswordEncoder->getEncoder() : $specificPasswordEncoder);
                     $enc->addEncoder($encoder);
                     $encoder = $enc;
+                } elseif($encoder instanceof PasswordEncoderInterface || $encoder instanceof EncoderFactoryInterface) {
+                    $encoder = $encoder instanceof EncoderFactoryInterface ? $encoder->getEncoder() : $encoder;
                 } else {
                     throw new BadCredentialException("No password encoder specified", 403);
                 }
