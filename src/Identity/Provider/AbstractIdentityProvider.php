@@ -45,21 +45,33 @@ abstract class AbstractIdentityProvider implements IdentityProviderInterface
     /**
      * By default, do nothing for installing or uninstalling identities
      *
-     * @param IdentityInterface $identity
-     * @param Response $response
-     * @return bool
+     * @inheritDoc
      */
-    public function installIdentity(IdentityInterface $identity, Request $request, Response $response, bool $isCommon)
+    public function installIdentity(IdentityInterface $identity, Request $request, Response $response)
     {
         return true;
     }
 
+    /**
+     * Does not accept that other providers are allowed to install identities from this provider
+     *
+     * @param IdentityInterface $identity
+     * @return bool
+     */
     public function acceptCommonInstall(IdentityInterface $identity)
     {
         return false;
     }
 
-    public function uninstallIdentity(IdentityInterface $identity, Response $response, bool $isCommon)
+    /**
+     *
+     *
+     * @param IdentityInterface $identity
+     * @param Response $response
+     * @param bool $isCommon
+     * @return bool
+     */
+    public function uninstallIdentity(IdentityInterface $identity, Response $response)
     {
         return true;
     }

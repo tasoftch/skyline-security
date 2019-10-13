@@ -38,8 +38,9 @@ namespace Skyline\Security\Identity\Provider;
 use Generator;
 use Skyline\Security\Identity\AnonymousIdentity;
 use Skyline\Security\Identity\IdentityInterface;
-use Skyline\Security\Identity\Token\AnonymousToken;
+use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class AnonymousIdentityProvider extends AbstractIdentityProvider
 {
@@ -55,7 +56,21 @@ class AnonymousIdentityProvider extends AbstractIdentityProvider
     {
         $cookie = $request->cookies->get( static::ANONYMIOUS_COOKIE_NAME );
         if($cookie) {
-            yield new AnonymousIdentity(new AnonymousToken("anonymous"), "", IdentityInterface::RELIABILITY_ANONYMOUS);
+            yield new AnonymousIdentity($cookie, "", IdentityInterface::RELIABILITY_ANONYMOUS);
+        } else {
+            yield new AnonymousIdentity(uniqid("sky_anonymous_identity"), "", IdentityInterface::RELIABILITY_ANONYMOUS);
         }
+    }
+
+    public function installIdentity(IdentityInterface $identity, Request $request, Response $response)
+    {
+        $response->headers->setCookie( new Cookie(static::ANONYMIOUS_COOKIE_NAME, $identity->getToken()) );
+        return true;
+    }
+
+    public function uninstallIdentity(IdentityInterface $identity, Response $response)
+    {
+        $response->headers->clearCookie(static::ANONYMIOUS_COOKIE_NAME);
+        return true;
     }
 }

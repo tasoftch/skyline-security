@@ -70,10 +70,11 @@ interface IdentityProviderInterface
      * Examples are anonymous or remember me identities
      *
      * @param IdentityInterface $identity
+     * @param Request $request
      * @param Response $response
      * @return bool
      */
-    public function installIdentity(IdentityInterface $identity, Request $request, Response $response, bool $isCommon);
+    public function installIdentity(IdentityInterface $identity, Request $request, Response $response);
 
     /**
      * If identities of this provider may be used by others to install, return true in this implementation
@@ -89,9 +90,9 @@ interface IdentityProviderInterface
      *
      * @param IdentityInterface $identity
      * @param Response $response
-     * @return mixed
+     * @return bool
      */
-    public function uninstallIdentity(IdentityInterface $identity, Response $response, bool $isCommon);
+    public function uninstallIdentity(IdentityInterface $identity, Response $response);
 
     /**
      * Probably the provider knows that an identity requires a specific password encoder.
