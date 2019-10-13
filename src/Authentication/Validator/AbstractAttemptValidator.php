@@ -38,9 +38,7 @@ namespace Skyline\Security\Authentication\Validator;
 use DateTime;
 use Skyline\Security\Authentication\Validator\HashGenerator\HashGeneratorInterface;
 use Skyline\Security\Authentication\Validator\Storage\AttemptStorage;
-use Skyline\Security\Authentication\Validator\Storage\SQLStorageInterface;
 use Skyline\Security\Authentication\Validator\Storage\StorageInterface;
-use Skyline\Security\Exception\AuthenticationValidatorException;
 use Skyline\Security\Exception\FailedAttemptException;
 use Skyline\Security\Identity\IdentityInterface;
 use Skyline\Security\User\UserInterface;
@@ -48,8 +46,6 @@ use Symfony\Component\HttpFoundation\Request;
 
 abstract class AbstractAttemptValidator extends AbstractStorableValidator implements AuthenticationPreValidatorInterface, AuthenticationPostValidatorInterface
 {
-    /** @var int */
-    private $maximalAttemptCount;
     /** @var int */
     private $blockedTimeInterval;
 
@@ -60,10 +56,9 @@ abstract class AbstractAttemptValidator extends AbstractStorableValidator implem
      * @param int $maximalAttemptCount
      * @param int $blockedTimeInterval
      */
-    public function __construct(StorageInterface $storage, HashGeneratorInterface $hashGenerator, int $maximalAttemptCount = 3, int $blockedTimeInterval = 900)
+    public function __construct(StorageInterface $storage, HashGeneratorInterface $hashGenerator, int $blockedTimeInterval = 900)
     {
         parent::__construct($storage, $hashGenerator);
-        $this->maximalAttemptCount = $maximalAttemptCount;
         $this->blockedTimeInterval = $blockedTimeInterval;
     }
 
@@ -97,7 +92,7 @@ abstract class AbstractAttemptValidator extends AbstractStorableValidator implem
         $storage = $this->getStorage();
 
         if($storage instanceof AttemptStorage) {
-            $storage->clearAttempts( $this->getValidAttemptLifeTime() );
+            $storage->clearAttempts( $this->getBlockedTimeInterval() );
             $attempt = $storage->getAttempt( $hash );
 
             if(!$this->validateAttempt($attempt)) {
@@ -119,32 +114,6 @@ abstract class AbstractAttemptValidator extends AbstractStorableValidator implem
      * @return bool
      */
     abstract protected function validateAttempt(?Attempt $attempt): bool;
-
-    /**
-     * Override this method to specify a different life time for stored attempts.
-     * You return a value int seconds, so returning 900 will ignore all attempts older than 15 minutes.
-     *
-     * @return int
-     */
-    protected function getValidAttemptLifeTime(): int {
-        return $this->getBlockedTimeInterval();
-    }
-
-    /**
-     * @return int
-     */
-    public function getMaximalAttemptCount(): int
-    {
-        return $this->maximalAttemptCount;
-    }
-
-    /**
-     * @param int $maximalAttemptCount
-     */
-    public function setMaximalAttemptCount(int $maximalAttemptCount): void
-    {
-        $this->maximalAttemptCount = $maximalAttemptCount;
-    }
 
     /**
      * @return int
