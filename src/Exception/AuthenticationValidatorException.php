@@ -35,6 +35,26 @@
 namespace Skyline\Security\Exception;
 
 
-class HiddenUserException extends UserNotFoundException
+use Skyline\Security\Authentication\Validator\AuthenticationValidatorInterface;
+
+class AuthenticationValidatorException extends AuthenticationException
 {
+    /** @var AuthenticationValidatorInterface */
+    private $validator;
+
+    /**
+     * @return AuthenticationValidatorInterface
+     */
+    public function getValidator(): AuthenticationValidatorInterface
+    {
+        return $this->validator;
+    }
+
+    /**
+     * @param AuthenticationValidatorInterface $validator
+     */
+    public function setValidator(AuthenticationValidatorInterface $validator): void
+    {
+        $this->validator = $validator;
+    }
 }

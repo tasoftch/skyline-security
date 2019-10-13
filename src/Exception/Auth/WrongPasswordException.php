@@ -32,9 +32,29 @@
  *
  */
 
-namespace Skyline\Security\Exception;
+namespace Skyline\Security\Exception\Auth;
 
 
-class BlockedUserException extends UserNotFoundException
+use Skyline\Security\Exception\AuthenticationException;
+
+class WrongPasswordException extends AuthenticationException
 {
+    /** @var string */
+    private $username;
+
+    /**
+     * @return string
+     */
+    public function getUsername(): string
+    {
+        return $this->username;
+    }
+
+    /**
+     * @param string $username
+     */
+    public function setUsername(string $username): void
+    {
+        $this->username = $username;
+    }
 }

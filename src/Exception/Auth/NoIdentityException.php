@@ -32,15 +32,11 @@
  *
  */
 
-namespace Skyline\Security\Identity\Token;
+namespace Skyline\Security\Exception\Auth;
 
 
-interface TokenInterface
+use Skyline\Security\Exception\AuthenticationException;
+
+class NoIdentityException extends AuthenticationException
 {
-    /**
-     * Gets the identification token
-     *
-     * @return mixed
-     */
-    public function getToken();
 }

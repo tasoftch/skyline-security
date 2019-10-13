@@ -37,5 +37,4 @@ namespace Skyline\Security\Exception;
 
 class BadCredentialException extends AuthenticationException
 {
-
 }

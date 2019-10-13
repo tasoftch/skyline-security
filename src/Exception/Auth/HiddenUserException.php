@@ -32,27 +32,11 @@
  *
  */
 
-namespace Skyline\Security\Exception;
+namespace Skyline\Security\Exception\Auth;
 
 
-class UserNotFoundException extends AuthenticationException
+use Skyline\Security\Exception\UserNotFoundException;
+
+class HiddenUserException extends UserNotFoundException
 {
-    /** @var string */
-    private $username;
-
-    /**
-     * @return string
-     */
-    public function getUsername(): string
-    {
-        return $this->username;
-    }
-
-    /**
-     * @param string $username
-     */
-    public function setUsername(string $username): void
-    {
-        $this->username = $username;
-    }
 }

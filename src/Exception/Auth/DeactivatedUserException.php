@@ -32,9 +32,9 @@
  *
  */
 
-namespace Skyline\Security\Identity\Token;
+namespace Skyline\Security\Exception\Auth;
 
 
-class AnonymousToken extends Token
+class DeactivatedUserException extends BlockedUserException
 {
 }
