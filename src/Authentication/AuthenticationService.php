@@ -38,6 +38,7 @@ use InvalidArgumentException;
 use Skyline\Security\Authentication\Validator\AuthenticationPostValidatorInterface;
 use Skyline\Security\Authentication\Validator\AuthenticationPreValidatorInterface;
 use Skyline\Security\Authentication\Validator\AuthenticationValidatorInterface;
+use Skyline\Security\Authentication\Validator\Factory\ValidatorFactoryInterface;
 use Skyline\Security\Encoder\EncoderFactoryInterface;
 use Skyline\Security\Encoder\PasswordEncoderInterface;
 use Skyline\Security\User\Provider\UserProviderInterface;
@@ -102,14 +103,25 @@ class AuthenticationService extends AbstractAuthenticationService
     /**
      * Adds a validator
      *
-     * @param AuthenticationValidatorInterface $validator
+     * @param AuthenticationValidatorInterface|ValidatorFactoryInterface $validator
      * @return static
      */
-    public function addValidator(AuthenticationValidatorInterface $validator) {
-        if($validator instanceof AuthenticationPreValidatorInterface && !in_array($validator, $this->beforeValidators))
-            $this->beforeValidators[] = $validator;
-        if($validator instanceof AuthenticationPostValidatorInterface && !in_array($validator, $this->afterValidators))
-            $this->afterValidators[] = $validator;
+    public function addValidator($validator) {
+        $addValidator = function($v) {
+            if($v instanceof AuthenticationPreValidatorInterface && !in_array($v, $this->beforeValidators))
+                $this->beforeValidators[] = $v;
+            if($v instanceof AuthenticationPostValidatorInterface && !in_array($v, $this->afterValidators))
+                $this->afterValidators[] = $v;
+        };
+
+        if($validator instanceof ValidatorFactoryInterface) {
+            foreach($validator->getValidators() as $v)
+                $addValidator($v);
+
+        } else {
+            $addValidator($validator);
+        }
+
         return $this;
     }
 
