@@ -92,7 +92,8 @@ abstract class AbstractAttemptValidator extends AbstractStorableValidator implem
         $storage = $this->getStorage();
 
         if($storage instanceof AttemptStorage) {
-            $storage->clearAttempts( $this->getBlockedTimeInterval() );
+            $this->clearAttempts($storage);
+
             $attempt = $storage->getAttempt( $hash );
 
             if(!$this->validateAttempt($attempt)) {
@@ -102,9 +103,18 @@ abstract class AbstractAttemptValidator extends AbstractStorableValidator implem
                 $e->setAttempt($attempt);
                 throw $e;
             }
+            return true;
         }
 
         return false;
+    }
+
+    /**
+     * Override this method for custom clearing the attempts
+     * @param AttemptStorage $storage
+     */
+    protected function clearAttempts(AttemptStorage $storage) {
+        $storage->clearAttempts( $this->getBlockedTimeInterval() );
     }
 
     /**

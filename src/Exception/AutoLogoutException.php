@@ -32,28 +32,9 @@
  *
  */
 
-namespace Skyline\Security\Authentication\Validator\Factory;
+namespace Skyline\Security\Exception;
 
 
-use Skyline\Security\Authentication\Validator\Attempt;
-use Skyline\Security\Authentication\Validator\CallbackAttemptValidator;
-use Skyline\Security\Authentication\Validator\HashGenerator\RequestURIHashGenerator;
-use Skyline\Security\Authentication\Validator\Storage\AttemptStorage;
-
-class BruteForceByServerURIValidatorFactory extends BruteForceByClientIPValidatorFactory
+class AutoLogoutException extends AuthenticationValidatorException
 {
-    public function __construct(string $filename, int $maximalTrialCount = 3, int $blockedTimeInterval = 900, string $tableName = 'URI_ATTEMPT', string $userName = NULL, string $password = NULL)
-    {
-        parent::__construct($filename, $maximalTrialCount, $blockedTimeInterval, $tableName, $userName, $password);
-    }
-
-    public function getValidators(): array
-    {
-        $validator = new CallbackAttemptValidator(function(?Attempt $attempt) {
-            if($attempt && $attempt->getTrials() >= $this->getMaximalTrialCount())
-                return false;
-            return true;
-        }, new AttemptStorage($this->getFilename(), $this->getTableName(), $this->getUserName(), $this->getPassword()), new RequestURIHashGenerator(), $this->getBlockedTimeInterval());
-        return [$validator];
-    }
 }

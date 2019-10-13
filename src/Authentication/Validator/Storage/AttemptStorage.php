@@ -41,14 +41,52 @@ use Skyline\Security\Authentication\Validator\Attempt;
 
 class AttemptStorage extends SQLiteStorage
 {
+    /** @var string */
+    private $tableName;
+
+    public function __construct(string $filename, string $tableName = 'ATTEMPT', $userName = NULL, $password = NULL)
+    {
+        parent::__construct($filename, $userName, $password);
+        $this->tableName = $tableName;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTableName(): string
+    {
+        return $this->tableName;
+    }
+
     protected function initializeStorage()
     {
-        $this->getPDO()->exec("CREATE TABLE ATTEMPT (
+        $tn = $this->getTableName();
+        $this->createAttemptTable($tn);
+    }
+
+    protected function createAttemptTable($tableName) {
+        $this->getPDO()->exec("CREATE TABLE IF NOT EXISTS $tableName (
     hash TEXT NOT NULL UNIQUE ,
     date date NOT NULL,
     data TEXT DEFAULT NULL
 );");
     }
+
+    protected function checkStorage()
+    {
+        parent::checkStorage();
+        try {
+            $tn = $this->getTableName();
+            $result = @$this->getPDO()->query("SELECT 1 FROM $tn LIMIT 1");
+            if($result !== false)
+                $this->createAttemptTable($tn);
+        } catch (\PDOException $exception) {
+            $this->createAttemptTable($tn);
+        }
+
+        return;
+    }
+
 
     public function set($hash, $name, $value)
     {
@@ -72,13 +110,14 @@ class AttemptStorage extends SQLiteStorage
      */
     public function setAttempt(Attempt $attempt) {
         $this->checkStorage();
+        $tn = $this->getTableName();
 
         $hash = $this->getPDO()->quote($attempt->getHash());
         $date = $this->getPDO()->quote($attempt->getDate()->format("Y-m-d G:i:s"));
         $attempt = $this->getPDO()->quote( serialize($attempt) );
 
-        $this->getPDO()->exec("DELETE FROM ATTEMPT WHERE hash = $hash");
-        $this->getPDO()->exec("INSERT INTO ATTEMPT (hash, date, data) VALUES ( $hash, $date, $attempt )");
+        $this->getPDO()->exec("DELETE FROM $tn WHERE hash = $hash");
+        $this->getPDO()->exec("INSERT INTO $tn (hash, date, data) VALUES ( $hash, $date, $attempt )");
     }
 
     /**
@@ -89,9 +128,10 @@ class AttemptStorage extends SQLiteStorage
      */
     public function getAttempt($hash):?Attempt {
         $this->checkStorage();
+        $tn = $this->getTableName();
 
         $hash = $this->getPDO()->quote($hash);
-        $attempt = $this->getPDO()->query("SELECT data FROM ATTEMPT WHERE hash = $hash")->fetch(\PDO::FETCH_ASSOC)["data"] ?? NULL;
+        $attempt = $this->getPDO()->query("SELECT data FROM $tn WHERE hash = $hash")->fetch(\PDO::FETCH_ASSOC)["data"] ?? NULL;
         if($attempt)
             return unserialize( $attempt );
         return NULL;
@@ -103,16 +143,18 @@ class AttemptStorage extends SQLiteStorage
      */
     public function clearAttempts(int $olderThan) {
         $this->checkStorage();
+        $tn = $this->getTableName();
 
         $date = new DateTime("now-{$olderThan}seconds");
         $date = $this->getPDO()->quote( $date->format("Y-m-d G:i:s") );
-        $this->getPDO()->exec("DELETE FROM ATTEMPT WHERE date <= $date");
+        $this->getPDO()->exec("DELETE FROM $tn WHERE date <= $date");
     }
 
     public function clearAttempt(Attempt $attempt) {
         $this->checkStorage();
+        $tn = $this->getTableName();
 
         $hash = $this->getPDO()->quote($attempt->getHash());
-        $this->getPDO()->exec("DELETE FROM ATTEMPT WHERE hash = $hash");
+        $this->getPDO()->exec("DELETE FROM $tn WHERE hash = $hash");
     }
 }

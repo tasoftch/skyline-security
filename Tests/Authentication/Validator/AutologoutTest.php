@@ -32,28 +32,46 @@
  *
  */
 
-namespace Skyline\Security\Authentication\Validator\Factory;
+/**
+ * AutologoutTest.php
+ * skyline-security
+ *
+ * Created on 2019-10-13 18:46 by thomas
+ */
 
+use PHPUnit\Framework\TestCase;
+use Skyline\Security\Authentication\Validator\AbstractAttemptValidator;
+use Skyline\Security\Authentication\Validator\Factory\AutoLogoutValidatorFactory;
+use Skyline\Security\Exception\AutoLogoutException;
+use Skyline\Security\Identity\Identity;
+use Symfony\Component\HttpFoundation\Request;
 
-use Skyline\Security\Authentication\Validator\Attempt;
-use Skyline\Security\Authentication\Validator\CallbackAttemptValidator;
-use Skyline\Security\Authentication\Validator\HashGenerator\RequestURIHashGenerator;
-use Skyline\Security\Authentication\Validator\Storage\AttemptStorage;
-
-class BruteForceByServerURIValidatorFactory extends BruteForceByClientIPValidatorFactory
+class AutologoutTest extends TestCase
 {
-    public function __construct(string $filename, int $maximalTrialCount = 3, int $blockedTimeInterval = 900, string $tableName = 'URI_ATTEMPT', string $userName = NULL, string $password = NULL)
-    {
-        parent::__construct($filename, $maximalTrialCount, $blockedTimeInterval, $tableName, $userName, $password);
-    }
+    /**
+     * @expectedException Skyline\Security\Exception\AutoLogoutException
+     */
+    public function testAutologout() {
+        $file = __DIR__ . "/security.sqlite";
+        if(file_exists($file))
+            unlink($file);
 
-    public function getValidators(): array
-    {
-        $validator = new CallbackAttemptValidator(function(?Attempt $attempt) {
-            if($attempt && $attempt->getTrials() >= $this->getMaximalTrialCount())
-                return false;
-            return true;
-        }, new AttemptStorage($this->getFilename(), $this->getTableName(), $this->getUserName(), $this->getPassword()), new RequestURIHashGenerator(), $this->getBlockedTimeInterval());
-        return [$validator];
+        /** @var AbstractAttemptValidator $val1 */
+        $val1 = (new AutoLogoutValidatorFactory($file, 3))->getValidators()[0];
+
+        $identity = new Identity("admin", "121212", 200);
+        $request = Request::create("/test", "POST", [], [], [], ["REMOTE_ADDR" => '201.66.78.12']);
+
+        $this->assertTrue($val1->grantBeforeAuthentication($identity, $request));
+        $val1->grantAfterAuthentication($identity, NULL, $request);
+
+        sleep(1);
+        $this->assertTrue($val1->grantBeforeAuthentication($identity, $request));
+
+        sleep(1);
+        $this->assertTrue($val1->grantBeforeAuthentication($identity, $request));
+
+        sleep(2);
+        $this->assertTrue($val1->grantBeforeAuthentication($identity, $request));
     }
 }

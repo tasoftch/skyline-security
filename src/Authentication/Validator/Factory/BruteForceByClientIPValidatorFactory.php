@@ -36,7 +36,6 @@ namespace Skyline\Security\Authentication\Validator\Factory;
 
 
 use Skyline\Security\Authentication\Validator\Attempt;
-use Skyline\Security\Authentication\Validator\AuthenticationValidatorInterface;
 use Skyline\Security\Authentication\Validator\CallbackAttemptValidator;
 use Skyline\Security\Authentication\Validator\HashGenerator\RemoteIPHashGenerator;
 use Skyline\Security\Authentication\Validator\Storage\AttemptStorage;
@@ -53,32 +52,36 @@ class BruteForceByClientIPValidatorFactory implements ValidatorFactoryInterface
     private $blockedTimeInterval;
     /** @var int */
     private $maximalTrialCount;
+    /** @var string */
+    private $tableName;
 
     /**
      * BruteForceByClientIPValidatorFactory constructor.
      * @param string $filename
      * @param string|null $userName
      * @param string|null $password
+     * @param string $tableName
      * @param int $blockedTimeInterval
      * @param int $maximalTrialCount
      */
-    public function __construct(string $filename, int $maximalTrialCount = 3, string $userName = NULL, string $password = NULL, int $blockedTimeInterval = 900)
+    public function __construct(string $filename, int $maximalTrialCount = 3, int $blockedTimeInterval = 900, string $tableName = 'IP_ATTEMPT', string $userName = NULL, string $password = NULL)
     {
         $this->filename = $filename;
         $this->userName = $userName;
         $this->password = $password;
         $this->blockedTimeInterval = $blockedTimeInterval;
         $this->maximalTrialCount = $maximalTrialCount;
+        $this->tableName = $tableName;
     }
 
 
     public function getValidators(): array
     {
         $validator = new CallbackAttemptValidator(function(?Attempt $attempt) {
-            if($attempt && $attempt->getTrials() > $this->getMaximalTrialCount())
+            if($attempt && $attempt->getTrials() >= $this->getMaximalTrialCount())
                 return false;
             return true;
-        }, new AttemptStorage($this->getFilename(), $this->getUserName(), $this->getPassword()), new RemoteIPHashGenerator(), $this->getBlockedTimeInterval());
+        }, new AttemptStorage($this->getFilename(), $this->getTableName(), $this->getUserName(), $this->getPassword()), new RemoteIPHashGenerator(), $this->getBlockedTimeInterval());
         return [$validator];
     }
 
@@ -160,5 +163,13 @@ class BruteForceByClientIPValidatorFactory implements ValidatorFactoryInterface
     {
         $this->maximalTrialCount = $maximalTrialCount;
         return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTableName(): string
+    {
+        return $this->tableName;
     }
 }
