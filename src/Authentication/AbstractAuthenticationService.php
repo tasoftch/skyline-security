@@ -96,7 +96,7 @@ abstract class AbstractAuthenticationService implements AuthenticationServiceInt
 
             try {
                 foreach ($this->getBeforeValidators() as $validator) {
-                    if(!$validator->grantBeforeAuthentication($identity, $request)) {
+                    if($validator->isEnabled() && !$validator->grantBeforeAuthentication($identity, $request)) {
                         $e = new AuthenticationValidatorException("", 401);
                         $e->setValidator($validator);
                         throw $e;
@@ -157,7 +157,7 @@ abstract class AbstractAuthenticationService implements AuthenticationServiceInt
                 throw $exception;
             } finally {
                 foreach($this->getAfterValidators() as $validator) {
-                    if(!$validator->grantAfterAuthentication($identity, $user, $request)) {
+                    if($validator->isEnabled() && !$validator->grantAfterAuthentication($identity, $user, $request)) {
                         $e = new AuthenticationValidatorException("", 401);
                         $e->setValidator($validator);
                         throw $e;

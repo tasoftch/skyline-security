@@ -45,4 +45,9 @@ namespace Skyline\Security\Authentication\Validator;
  */
 interface AuthenticationValidatorInterface
 {
+    /**
+     * Sets whether the validator is enabled or not
+     * @return bool
+     */
+    public function isEnabled(): bool;
 }
