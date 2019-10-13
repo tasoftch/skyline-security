@@ -34,8 +34,6 @@
 
 namespace Skyline\Security\User\Provider;
 
-
-use Skyline\Security\Identity\Token\TokenInterface;
 use Skyline\Security\User\UserInterface;
 
 class ChainUserProvider implements UserProviderAwareInterface
@@ -74,7 +72,7 @@ class ChainUserProvider implements UserProviderAwareInterface
     /**
      * @inheritDoc
      */
-    public function loadUserWithToken(TokenInterface $token): ?UserInterface
+    public function loadUserWithToken(string $token): ?UserInterface
     {
         foreach($this->getProviders() as $provider) {
             if($u = $provider->loadUserWithToken($token))

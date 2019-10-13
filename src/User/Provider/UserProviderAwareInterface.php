@@ -35,11 +35,11 @@
 namespace Skyline\Security\User\Provider;
 
 
-interface UserProviderAwareInterface
+interface UserProviderAwareInterface extends UserProviderInterface
 {
     /**
      * Expects an array containing the user's id as key and its username as value
      * @return array
      */
-    public function getAllUsernames(): array;
+    public function getUsernames(): array;
 }

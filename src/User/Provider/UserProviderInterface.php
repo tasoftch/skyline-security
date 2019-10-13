@@ -34,9 +34,6 @@
 
 namespace Skyline\Security\User\Provider;
 
-
-use Skyline\Security\Exception\UserNotFoundException;
-use Skyline\Security\Identity\Token\TokenInterface;
 use Skyline\Security\User\UserInterface;
 
 interface UserProviderInterface
@@ -44,9 +41,8 @@ interface UserProviderInterface
     /**
      * Loads (if needed) a user by a given token and return it.
      *
-     * @param TokenInterface $token
+     * @param string $token
      * @return UserInterface|null
-     * @throws UserNotFoundException
      */
-    public function loadUserWithToken(TokenInterface $token): ?UserInterface;
+    public function loadUserWithToken(string $token): ?UserInterface;
 }

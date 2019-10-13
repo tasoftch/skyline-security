@@ -34,25 +34,16 @@
 
 namespace Skyline\Security\User\Provider;
 
-
-use Skyline\Security\Exception\UserNotFoundException;
-use Skyline\Security\Identity\Token\TokenInterface;
 use Skyline\Security\User\UserInterface;
 
-class InMemoryProvider implements UserProviderInterface, UserProviderAwareInterface
+class InMemoryUserProvider implements UserProviderInterface, UserProviderAwareInterface
 {
     /** @var array */
     private $users;
 
-    public function loadUserWithToken(TokenInterface $token): ?UserInterface
+    public function loadUserWithToken(string $token): ?UserInterface
     {
-        $user = $this->users[ $token->getToken() ] ?? NULL;
-        if(!$user) {
-            $e = new UserNotFoundException("User %s not found", 401, NULL, $token->getToken());
-            $e->setToken($token);
-            throw $e;
-        }
-        return $user;
+        return $this->users[ $token ] ?? NULL;
     }
 
     /**
@@ -90,7 +81,7 @@ class InMemoryProvider implements UserProviderInterface, UserProviderAwareInterf
             $this->addUser($u);
     }
 
-    public function getAllUsernames(): array
+    public function getUsernames(): array
     {
         return array_keys($this->users);
     }

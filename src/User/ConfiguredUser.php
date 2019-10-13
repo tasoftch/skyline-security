@@ -32,58 +32,44 @@
  *
  */
 
-namespace Skyline\Security\User\Provider;
+namespace Skyline\Security\User;
 
 
-use Skyline\Security\Exception\SecurityException;
-use Skyline\Security\Role\RoleInterface;
-use Skyline\Security\User\InitialUser;
-use Skyline\Security\User\UserInterface;
+use ArrayAccess;
+use InvalidArgumentException;
 
-class InitialUserProvider implements UserProviderInterface, UserProviderAwareInterface
+class ConfiguredUser extends AdvancedUser
 {
-    /** @var string */
-    private $username;
-
-    /** @var string */
-    private $password;
-
-    private $roles = [];
+    const USERNAME_KEY = 'username';
+    const CREDENTIALS_KEY = 'credentials';
+    const OPTIONS_KEY = 'options';
 
     /**
-     * InitialUserSource constructor.
-     * @param string $username
-     * @param string $password
+     * ConfiguredUser constructor.
+     * @param array|ArrayAccess $data
      * @param array $roles
      */
-    public function __construct(string $username, string $password, $roles = [RoleInterface::ROLE_ROOT])
+    public function __construct($data, array $roles = [])
     {
-        if(!$username) {
-            throw new SecurityException("Can not load initial user without valid username", 403);
-        }
+        $username = $data[ static::USERNAME_KEY ] ?? NULL;
+        $credentials = $data[ static::CREDENTIALS_KEY ] ?? NULL;
 
-        if(!$password) {
-            throw new SecurityException("Can not load initial user without valid password", 403);
-        }
+        if(!$username || !$credentials)
+            throw new InvalidArgumentException("Data record for configured users must contain a username key and a credentials key", 403);
 
-        $this->username = $username;
-        $this->password = $password;
-        $this->roles = $roles;
+        parent::__construct($username, $credentials, $roles, $data[ static::OPTIONS_KEY ] ?? 0);
+
+        unset($data[static::USERNAME_KEY]);
+        unset($data[static::CREDENTIALS_KEY]);
+
+        $this->loadFurtherData($data);
     }
 
-    public function loadUserWithToken(string $token): ?UserInterface
-    {
-        if($token == $this->username) {
-            $u = new InitialUser($this->username, $this->password, $this->roles);
-            return $u;
-        }
-        return NULL;
-    }
-
-    public function getUsernames(): array
-    {
-        return [
-            $this->username
-        ];
+    /**
+     * Override this method to adjust further user properties from record.
+     *
+     * @param $data
+     */
+    protected function loadFurtherData($data) {
     }
 }
