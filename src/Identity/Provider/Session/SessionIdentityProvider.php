@@ -32,70 +32,48 @@
  *
  */
 
-namespace Skyline\Security\Identity;
+namespace Skyline\Security\Identity\Provider\Session;
 
 
-class Identity implements IdentityInterface
+use Skyline\Security\Identity\IdentityInterface;
+use Skyline\Security\Identity\SessionIdentity;
+use Symfony\Component\HttpFoundation\Request;
+
+class SessionIdentityProvider extends RememberMeIdentityProvider
 {
-    private $token;
-    private $credentials;
-    private $options = [];
-    private $reliability = 0;
+    const COOKIE_NAME = 'skyline_security_session';
 
-
-
-    /**
-     * @inheritdoc
-     */
-    public function getCredentials(): string
+    public function __construct(string $providerKey, string $secret, array $options = [])
     {
-        return $this->credentials;
+        if(!isset($options[ static::OPTION_COOKIE_NAME ]) || empty($options[ static::OPTION_COOKIE_NAME ]))
+            $options[ static::OPTION_COOKIE_NAME ] = static::COOKIE_NAME;
+
+        parent::__construct($providerKey, $secret, $options);
     }
 
-    /**
-     * Identity constructor.
-     * @param string $token
-     * @param string $credentials
-     * @param int $reliability
-     * @param array $options
-     */
-    public function __construct(string $token, string $credentials, int $reliability, array $options = [])
+    public function getLifeTime()
     {
-        $this->token = $token;
-        $this->credentials = $credentials;
-        $this->options = $options;
-        $this->reliability = $reliability;
+        return 0;
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function getOptions(): array
+    protected function createIdentity($username, $password, $reliability, $options): IdentityInterface
     {
-        return $this->options;
+        return (new SessionIdentity($username, $password, IdentityInterface::RELIABILITY_SESSION, $options))->setRememberMe(false);
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function setOptions(array $options)
+    public function isProvidedIdentity(IdentityInterface $identity): bool
     {
-        $this->options = $options;
+        return $identity instanceof SessionIdentity && !$identity->isRememberMe();
     }
 
-    /**
-     * @return string
-     */
-    public function getToken(): string
+
+    public function getClientRememberMeRequest(Request $request): bool
     {
-        return $this->token;
+        return true;
     }
 
-    /**
-     * @return int
-     */
-    public function getReliability(): int
+    public function acceptCommonInstall(IdentityInterface $identity)
     {
-        return $this->reliability;
+        return false;
     }
 }

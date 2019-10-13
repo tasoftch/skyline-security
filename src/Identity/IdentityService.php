@@ -32,18 +32,21 @@
  *
  */
 
-namespace Skyline\Security\Service;
+namespace Skyline\Security\Identity;
 
 
 use InvalidArgumentException;
 use Skyline\Security\Encoder\PasswordEncoderInterface;
-use Skyline\Security\Identity\IdentityInterface;
 use Skyline\Security\Identity\Provider\IdentityProviderFactoryInterface;
 use Skyline\Security\Identity\Provider\IdentityProviderInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use TASoft\Util\CachedGenerator;
 
+/**
+ * Class IdentityService is a wrapper class to allow better identity lookup for your application
+ * @package Skyline\Security\Identity
+ */
 class IdentityService
 {
     /** @var IdentityProviderInterface */
@@ -156,7 +159,7 @@ class IdentityService
      * @return bool
      */
     public function installIdentity(IdentityInterface $identity, Request $request, Response $response): bool {
-        return $this->getProvider()->installIdentity($identity, $request, $response, false) ? true : false;
+        return $this->getProvider()->installIdentity($identity, $request, $response) ? true : false;
     }
 
     /**
@@ -167,7 +170,7 @@ class IdentityService
      * @return bool
      */
     public function uninstallIdentity(IdentityInterface $identity, Response $response): bool {
-        return $this->getProvider()->uninstallIdentity($identity, $response, false) ? true : false;
+        return $this->getProvider()->uninstallIdentity($identity, $response) ? true : false;
     }
 
     /**

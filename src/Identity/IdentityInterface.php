@@ -35,8 +35,6 @@
 namespace Skyline\Security\Identity;
 
 
-use Skyline\Security\Identity\Token\TokenInterface;
-
 interface IdentityInterface
 {
     /**
@@ -60,9 +58,9 @@ interface IdentityInterface
 
     /**
      * The identification token
-     * @return TokenInterface
+     * @return string
      */
-    public function getToken(): TokenInterface;
+    public function getToken(): string;
 
     /**
      * The hashed password.

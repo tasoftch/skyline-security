@@ -32,32 +32,28 @@
  *
  */
 
-namespace Skyline\Security\Identity\Token;
+namespace Skyline\Security\Identity;
 
 
-class Token implements TokenInterface
+class SessionIdentity extends Identity
 {
-    private $token;
+    private $rememberMe = false;
 
     /**
-     * Token constructor.
-     * @param $token
+     * @return bool
      */
-    public function __construct($token)
+    public function isRememberMe(): bool
     {
-        $this->token = $token;
+        return $this->rememberMe;
     }
 
     /**
-     * @return mixed
+     * @param bool $rememberMe
+     * @return static
      */
-    public function getToken()
+    public function setRememberMe(bool $rememberMe)
     {
-        return $this->token;
-    }
-
-    public function __toString()
-    {
-        return (string) $this->getToken();
+        $this->rememberMe = $rememberMe;
+        return $this;
     }
 }
