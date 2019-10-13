@@ -17,9 +17,14 @@
     "php": "^7.2",
     "skyline/kernel": "dev-master",
     "symfony/http-foundation": "dev-master",
-    "tasoft/cached-generator": "dev-master"
+    "tasoft/cached-generator": "dev-master",
+    "ext-openssl": "*"
   },
   "require-dev": {
-    "phpunit/phpunit": "^6"
+    "phpunit/phpunit": "^6",
+    "skyline/render": "dev-master"
+  },
+  "suggest": {
+    "skyline/render": "Enable client challenges using templates for html forms and HTTP\\POSTFieldsIdentityProvider"
   }
 }

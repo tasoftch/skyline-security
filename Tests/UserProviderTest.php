@@ -40,22 +40,22 @@
  */
 
 use PHPUnit\Framework\TestCase;
-use Skyline\Security\Identity\Token\Token;
 use Skyline\Security\User\InitialUser;
+use Skyline\Security\User\Provider\ChainUserProvider;
 use Skyline\Security\User\Provider\InitialUserProvider;
-use Skyline\Security\User\Provider\InMemoryProvider;
+use Skyline\Security\User\Provider\InMemoryUserProvider;
 use Skyline\Security\User\User;
 
 class UserProviderTest extends TestCase
 {
     public function testInitialUserProvider() {
         $ip = new InitialUserProvider("admin", "admin");
-        $user = $ip->loadUserWithToken(new Token("admin"));
+        $user = $ip->loadUserWithToken("admin");
 
         $this->assertInstanceOf(InitialUser::class, $user);
         $this->assertEquals([
             "admin"
-        ], $ip->getAllUsernames());
+        ], $ip->getUsernames());
     }
 
     /**
@@ -72,21 +72,51 @@ class UserProviderTest extends TestCase
         $ip = new InitialUserProvider("admin", "");
     }
 
-    /**
-     * @expectedException Skyline\Security\Exception\UserNotFoundException
-     */
     public function testUnexistingUser() {
         $ip = new InitialUserProvider("admin", "admin");
-        $user = $ip->loadUserWithToken(new Token("test"));
+        $user = $ip->loadUserWithToken("test");
+
+        $this->assertNull($user);
     }
 
     public function testInMemoryUserProvider() {
-        $ip = new InMemoryProvider();
+        $ip = new InMemoryUserProvider();
 
         $ip->addUser($a1 = new User("admin", "test"));
         $ip->addUser($a2 = new User("admin2", "test"));
 
-        $this->assertSame($a1, $ip->loadUserWithToken(new Token("admin")));
-        $this->assertSame($a2, $ip->loadUserWithToken(new Token("admin2")));
+        $this->assertSame($a1, $ip->loadUserWithToken("admin"));
+        $this->assertSame($a2, $ip->loadUserWithToken("admin2"));
+    }
+
+    public function testChainUserProvider() {
+        $ip = new InMemoryUserProvider();
+
+        $ip->addUser($a1 = new User("admin", "test"));
+        $ip->addUser($a2 = new User("admin2", "test"));
+
+        $ch = new ChainUserProvider([$ip]);
+
+        $ip2 = new InMemoryUserProvider();
+
+        $ip2->addUser($a3 = new User("admin3", "test"));
+        $ip2->addUser($a4 = new User("admin4", "test"));
+
+        $ch->addProvider($ip2);
+
+        $this->assertSame($a1, $ip->loadUserWithToken("admin"));
+        $this->assertSame($a2, $ip->loadUserWithToken("admin2"));
+
+        $this->assertSame($a3, $ip2->loadUserWithToken("admin3"));
+        $this->assertSame($a4, $ip2->loadUserWithToken("admin4"));
+
+        $this->assertSame($a1, $ch->loadUserWithToken("admin"));
+        $this->assertSame($a2, $ch->loadUserWithToken("admin2"));
+        $this->assertSame($a3, $ch->loadUserWithToken("admin3"));
+        $this->assertSame($a4, $ch->loadUserWithToken("admin4"));
+
+        $this->assertEquals(["admin3", "admin4"], $ip2->getUsernames());
+
+        $this->assertEquals(["admin", "admin2", "admin3", "admin4"], $ch->getUsernames());
     }
 }
