@@ -47,7 +47,7 @@ use TASoft\Util\CachedGenerator;
  * Class IdentityService is a wrapper class to allow better identity lookup for your application
  * @package Skyline\Security\Identity
  */
-class IdentityService
+class IdentityService implements IdentityServiceInterface
 {
     /** @var IdentityProviderInterface */
     private $provider;
