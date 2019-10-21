@@ -57,6 +57,7 @@ class RememberMeIdentityProvider extends AbstractIdentityProvider
     const OPTION_COOKIE_SECURE = 'secure';
     const OPTION_COOKIE_HTTPONLY = "httponly";
     const OPTION_COOKIE_LIFETIME = 'lifetime';
+    const OPTION_REMEMBER_ME = 'rememberName';
 
     /** @var array  */
     protected $options = array(
@@ -136,7 +137,7 @@ class RememberMeIdentityProvider extends AbstractIdentityProvider
      * @return bool
      */
     public function getClientRememberMeRequest(Request $request): bool {
-        $name = static::REMEMBER_ME_NAME;
+        $name = $this->options[ static::OPTION_REMEMBER_ME ] ?? static::REMEMBER_ME_NAME;
         $parameter = $request->request->get($name);
 
         return ('true' === $parameter || 'on' === $parameter || '1' === $parameter || 'yes' === $parameter || true === $parameter);
