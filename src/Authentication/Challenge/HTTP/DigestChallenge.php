@@ -49,8 +49,8 @@ class DigestChallenge extends BasicChallenge
     public function __construct(string $realm = "Skyline Protected Area", $nonce = NULL, $opaque = NULL)
     {
         parent::__construct($realm);
-        $this->nonce = $nonce ?? md5( date("Y-m-d G") );
-        $this->opaque = $opaque ?? md5(static::DEFAULT_OPAQUE_STRING);
+        $this->nonce = $nonce ?: md5( date("Y-m-d G") );
+        $this->opaque = $opaque ?: md5(static::DEFAULT_OPAQUE_STRING);
     }
 
     protected function createAuthenticationHeader(Response $response)
