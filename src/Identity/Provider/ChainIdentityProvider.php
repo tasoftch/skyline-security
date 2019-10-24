@@ -140,18 +140,18 @@ class ChainIdentityProvider implements IdentityProviderChainInterface
         }
     }
 
-    public function installIdentity(IdentityInterface $identity, Request $request, Response $response, bool $isCommon)
+    public function installIdentity(IdentityInterface $identity, Request $request, Response $response)
     {
         if($provider = $this->getProviderByIdentity($identity)) {
             if($provider->acceptCommonInstall($identity)) {
                 foreach($this->getProviders() as $prov) {
                     $prov = $this->_solvedProvider($prov);
-                    if(!$prov->installIdentity($identity, $request, $response, true))
+                    if(!$prov->installIdentity($identity, $request, $response))
                         return false;
                 }
                 return true;
             } else {
-                return $provider->installIdentity($identity, $request, $response, false);
+                return $provider->installIdentity($identity, $request, $response);
             }
         }
         return false;
@@ -165,13 +165,13 @@ class ChainIdentityProvider implements IdentityProviderChainInterface
         return false;
     }
 
-    public function uninstallIdentity(IdentityInterface $identity, Response $response, bool $isCommon)
+    public function uninstallIdentity(IdentityInterface $identity, Response $response)
     {
         if($provider = $this->getProviderByIdentity($identity)) {
             foreach($this->getProviders() as $identityProvider) {
                 $prov = $this->_solvedProvider($identityProvider);
 
-                if(!$prov->uninstallIdentity($identity, $response, $provider !== $prov))
+                if(!$prov->uninstallIdentity($identity, $response))
                     return false;
             }
             return true;
