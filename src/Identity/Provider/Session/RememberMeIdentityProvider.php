@@ -192,7 +192,7 @@ class RememberMeIdentityProvider extends AbstractIdentityProvider
 
     public function uninstallIdentity(IdentityInterface $identity, Response $response)
     {
-        $response->headers->clearCookie($this->options[ static::COOKIE_NAME ]);
+        $response->headers->clearCookie($this->options[ static::OPTION_COOKIE_NAME ]);
         return true;
     }
 
