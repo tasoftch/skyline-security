@@ -88,7 +88,7 @@ abstract class AbstractAuthenticationService implements AuthenticationServiceInt
     public function authenticateIdentity(?IdentityInterface $identity, Request $request, $specificPasswordEncoder = NULL): UserInterface
     {
         if(!($identity instanceof IdentityInterface)) {
-            throw new NoIdentityException("", 401);
+            throw new NoIdentityException("No Identity found", 401);
         }
 
         try {
@@ -97,7 +97,7 @@ abstract class AbstractAuthenticationService implements AuthenticationServiceInt
             try {
                 foreach ($this->getBeforeValidators() as $validator) {
                     if($validator->isEnabled() && !$validator->grantBeforeAuthentication($identity, $request)) {
-                        $e = new AuthenticationValidatorException("", 401);
+                        $e = new AuthenticationValidatorException("Validator did cancel authentication", 401);
                         $e->setValidator($validator);
                         throw $e;
                     }
@@ -113,7 +113,7 @@ abstract class AbstractAuthenticationService implements AuthenticationServiceInt
                 $user = $this->getUserProvider()->loadUserWithToken( $identity->getToken() );
 
                 if(!($user instanceof UserInterface)) {
-                    $e = new UserNotFoundException("", 401);
+                    $e = new UserNotFoundException("User not found", 401);
                     $e->setUsername( $identity->getToken() );
                     throw $e;
                 }
@@ -122,11 +122,11 @@ abstract class AbstractAuthenticationService implements AuthenticationServiceInt
                     $options = $user->getOptions();
                     try {
                         if($options & $user::OPTION_BLOCKED)
-                            throw new BlockedUserException("", 401);
+                            throw new BlockedUserException("User is blocked", 401);
                         if($options & $user::OPTION_HIDDEN)
-                            throw new HiddenUserException("", 401);
+                            throw new HiddenUserException("User is hidden", 401);
                         if($options & $user::OPTION_DEACTIVATED)
-                            throw new DeactivatedUserException("", 401);
+                            throw new DeactivatedUserException("User is deactivated", 401);
                     } catch (UserNotFoundException $exception) {
                         /** @var IdentityInterface $identity */
                         $exception->setUsername( $identity->getToken() );
@@ -149,7 +149,7 @@ abstract class AbstractAuthenticationService implements AuthenticationServiceInt
 
 
                 if(!$encoder->isPasswordValid( $user->getCredentials(), $identity->getCredentials(), $identity->getOptions() )) {
-                    $e = new WrongPasswordException("", 401);
+                    $e = new WrongPasswordException("Password is wrong", 401);
                     $e->setUsername($identity->getToken());
                     throw $e;
                 }
@@ -158,7 +158,7 @@ abstract class AbstractAuthenticationService implements AuthenticationServiceInt
             } finally {
                 foreach($this->getAfterValidators() as $validator) {
                     if($validator->isEnabled() && !$validator->grantAfterAuthentication($identity, $user, $request)) {
-                        $e = new AuthenticationValidatorException("", 401);
+                        $e = new AuthenticationValidatorException("Authentication could not be completed because a validator did fail", 401);
                         $e->setValidator($validator);
                         throw $e;
                     }
