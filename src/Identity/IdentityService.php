@@ -37,6 +37,7 @@ namespace Skyline\Security\Identity;
 
 use InvalidArgumentException;
 use Skyline\Security\Encoder\PasswordEncoderInterface;
+use Skyline\Security\Identity\Provider\IdentityProviderChainInterface;
 use Skyline\Security\Identity\Provider\IdentityProviderFactoryInterface;
 use Skyline\Security\Identity\Provider\IdentityProviderInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -148,6 +149,19 @@ class IdentityService implements IdentityServiceInterface
         });
 
         return $list;
+    }
+
+    /**
+     * Gets a provider by an identity
+     *
+     * @param IdentityInterface $identity
+     * @return IdentityProviderInterface|null
+     */
+    public function getProviderForIdentity(IdentityInterface $identity): ?IdentityProviderInterface {
+        $p = $this->getProvider();
+        if($p instanceof IdentityProviderChainInterface)
+            return $p->getProviderByIdentity($identity);
+        return $p;
     }
 
     /**
