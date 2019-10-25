@@ -120,16 +120,15 @@ class RememberMeIdentityProvider extends AbstractIdentityProvider
 
         $pass = $this->generateDecodedCredentials( $pass );
         if(!$pass) {
-            $e = new BadCredentialException("Remember-Me Cookie is is not provided in correct manner");
+            $e = new BadCredentialException("Remember-Me Cookie is not provided in correct manner", 401);
             throw $e;
         }
 
-        $reliability = min($parts[2] ?? 0, IdentityInterface::RELIABILITY_REMEMBER_ME);
         $options = unserialize(base64_decode($parts[3] ?? base64_encode("N;")));
         if(!is_array($options))
             $options = [];
 
-        yield $this->createIdentity($user, $pass, $reliability, $options);
+        yield $this->createIdentity($user, $pass, IdentityInterface::RELIABILITY_REMEMBER_ME, $options);
     }
 
     /**
