@@ -129,6 +129,26 @@ class IdentityService implements IdentityServiceInterface
     }
 
     /**
+     * Also gets the first available identity with a minimal reliability, but will store the best identity in $found.
+     *
+     * @param Request $request
+     * @param int $reliability
+     * @param IdentityInterface|NULL $found
+     * @return IdentityInterface|null
+     */
+    public function getIdentityWithReliabilityMin(Request $request, int $reliability, IdentityInterface &$found = NULL): ?IdentityInterface {
+        /** @var IdentityInterface $identity */
+        foreach($this->yieldIdentities($request) as $identity) {
+            if(!$found || $found->getReliability() < $identity->getReliability())
+                $found = $identity;
+
+            if($identity->getReliability() >= $reliability)
+                return $identity;
+        }
+        return NULL;
+    }
+
+    /**
      * Gets all available identities with minimal reliability.
      * The identities are ordered by reliability, so the most trustful is the first identity in returned array.
      *
