@@ -73,6 +73,7 @@ abstract class AbstractAttemptValidator extends AbstractStorableValidator implem
             if($user) {
                 if($attempt)
                     $storage->clearAttempt($attempt);
+                return true;
             } else {
                 if($attempt) {
                     $attempt = new Attempt($hash, new DateTime(), $attempt->getTrials() + 1);
