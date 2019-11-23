@@ -32,26 +32,15 @@
  *
  */
 
-use Skyline\Kernel\Config\MainKernelConfig;
-use Skyline\Security\CSRF\CSRFTokenManager;
-use Skyline\Security\CSRF\TokenStorage\NativeSessionTokenStorage;
-use TASoft\Service\Config\AbstractFileConfiguration;
+define("SKY_SESS_COOKIE_OPTION_LIFETIME", 'cookie_lifetime');
+define("SKY_SESS_COOKIE_OPTION_PATH", 'cookie_path');
+define("SKY_SESS_COOKIE_OPTION_DOMAIN", 'cookie_domain');
+define("SKY_SESS_COOKIE_OPTION_SECURE", 'cookie_secure');
+define("SKY_SESS_COOKIE_OPTION_HTTP_ONLY", 'cookie_httponly');
+
 
 return [
-    MainKernelConfig::CONFIG_SERVICES => [
-        "CSRFManager" => [
-            AbstractFileConfiguration::SERVICE_CLASS => CSRFTokenManager::class,
-            AbstractFileConfiguration::SERVICE_INIT_ARGUMENTS => [
-                'generator' => NULL,
-                'storage' => '$CSRFTokenStorage'
-            ]
-        ],
-        "CSRFTokenStorage" => [
-            AbstractFileConfiguration::SERVICE_CLASS => NativeSessionTokenStorage::class,
-            AbstractFileConfiguration::SERVICE_INIT_ARGUMENTS => [
-                'namespace' => NativeSessionTokenStorage::SESSION_NAMESPACE,
-                'cookieOptions' => '%security.session.cookie-options%'
-            ]
-        ]
+    "security.session.cookie-options" => [
+        // Use the SKY_SESS_COOKIE_OPTION_* constants to specify the session cookie
     ]
 ];

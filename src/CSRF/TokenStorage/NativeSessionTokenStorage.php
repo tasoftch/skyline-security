@@ -46,15 +46,18 @@ class NativeSessionTokenStorage implements TokenStorageInterface
 
     private $sessionStarted = false;
     private $namespace;
+    private $cookieOptions;
 
     /**
      * Initializes the storage with a session namespace.
      *
      * @param string $namespace The namespace under which the token is stored in the session
+     * @param array $cookieOptions
      */
-    public function __construct(string $namespace = self::SESSION_NAMESPACE)
+    public function __construct(string $namespace = self::SESSION_NAMESPACE, array $cookieOptions = [])
     {
         $this->namespace = $namespace;
+        $this->cookieOptions = $cookieOptions;
     }
 
     /**
@@ -132,7 +135,10 @@ class NativeSessionTokenStorage implements TokenStorageInterface
     private function startSession()
     {
         if (PHP_SESSION_NONE === session_status()) {
-            session_start();
+            if($this->cookieOptions)
+                session_start( $this->cookieOptions );
+            else
+                session_start();
         }
 
         $this->sessionStarted = true;
