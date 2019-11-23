@@ -73,7 +73,6 @@ abstract class AbstractAttemptValidator extends AbstractStorableValidator implem
             if($user) {
                 if($attempt)
                     $storage->clearAttempt($attempt);
-                return true;
             } else {
                 if($attempt) {
                     $attempt = new Attempt($hash, new DateTime(), $attempt->getTrials() + 1);
@@ -84,7 +83,7 @@ abstract class AbstractAttemptValidator extends AbstractStorableValidator implem
                 $storage->setAttempt($attempt);
             }
         }
-        return false;
+        return true;
     }
 
     public function grantBeforeAuthentication(IdentityInterface $identity, Request $request): bool
