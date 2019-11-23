@@ -53,7 +53,8 @@ interface MutableUserProviderInterface extends UserProviderInterface
      *
      * @param string $credentials
      * @param UserInterface $forUser
+     * @param array|null $options       Options coming from password encoder
      * @return bool         Must return true if the credentials could be updated
      */
-    public function setCredentials(string $credentials, UserInterface $forUser);
+    public function setCredentials(string $credentials, UserInterface $forUser, $options);
 }

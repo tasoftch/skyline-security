@@ -146,14 +146,15 @@ class ChainUserProvider implements UserProviderAwareInterface, MutableUserProvid
      *
      * @param string $credentials
      * @param UserInterface $forUser
+     * @param array|null $options
      * @return bool
      */
-    public function setCredentials(string $credentials, UserInterface $forUser)
+    public function setCredentials(string $credentials, UserInterface $forUser, $options)
     {
         $result = false;
         foreach($this->getProviders() as $provider) {
             if($provider instanceof MutableUserProviderInterface) {
-                $result = $provider->setCredentials($credentials, $forUser) || $result;
+                $result = $provider->setCredentials($credentials, $forUser, $options) || $result;
             }
         }
         return $result;
