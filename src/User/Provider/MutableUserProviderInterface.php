@@ -44,7 +44,7 @@ interface MutableUserProviderInterface extends UserProviderInterface
      *
      * @param int $options
      * @param UserInterface $forUser
-     * @return void
+     * @return bool         Must return true, if the options could be updated
      */
     public function setOptions(int $options, UserInterface $forUser);
 
@@ -53,7 +53,7 @@ interface MutableUserProviderInterface extends UserProviderInterface
      *
      * @param string $credentials
      * @param UserInterface $forUser
-     * @return void
+     * @return bool         Must return true if the credentials could be updated
      */
     public function setCredentials(string $credentials, UserInterface $forUser);
 }

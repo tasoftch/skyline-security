@@ -36,7 +36,7 @@ namespace Skyline\Security\User\Provider;
 
 use Skyline\Security\User\UserInterface;
 
-class ChainUserProvider implements UserProviderAwareInterface
+class ChainUserProvider implements UserProviderAwareInterface, MutableUserProviderInterface
 {
     /** @var UserProviderInterface[] */
     private $providers = [];
@@ -121,5 +121,41 @@ class ChainUserProvider implements UserProviderAwareInterface
         if(($idx = array_search($provider, $this->providers)) !== false)
             unset($this->providers[$idx]);
         return $this;
+    }
+
+    /**
+     * Forwards set options to child providers
+     *
+     * @param int $options
+     * @param UserInterface $forUser
+     * @return bool
+     */
+    public function setOptions(int $options, UserInterface $forUser)
+    {
+        $result = false;
+        foreach($this->getProviders() as $provider) {
+            if($provider instanceof MutableUserProviderInterface) {
+                $result = $provider->setOptions($options, $forUser) || $result;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * Forwards credential update to child providers
+     *
+     * @param string $credentials
+     * @param UserInterface $forUser
+     * @return bool
+     */
+    public function setCredentials(string $credentials, UserInterface $forUser)
+    {
+        $result = false;
+        foreach($this->getProviders() as $provider) {
+            if($provider instanceof MutableUserProviderInterface) {
+                $result = $provider->setCredentials($credentials, $forUser) || $result;
+            }
+        }
+        return $result;
     }
 }
