@@ -154,6 +154,7 @@ abstract class AbstractAuthenticationService implements AuthenticationServiceInt
                     throw $e;
                 }
             } catch (Throwable $exception) {
+                $user = NULL;
                 throw $exception;
             } finally {
                 foreach($this->getAfterValidators() as $validator) {
