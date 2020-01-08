@@ -47,6 +47,8 @@ class CSRFTokenManager
     private $storage;
     private $namespace;
 
+    public static $csrfTokenClassName = CSRFToken::class;
+
     /**
      * @param TokenGeneratorInterface|null $generator
      * @param TokenStorageInterface|null $storage
@@ -87,7 +89,8 @@ class CSRFTokenManager
             $this->storage->setToken($namespacedId, $value);
         }
 
-        return new CSRFToken($tokenId, $value);
+        $c = self::$csrfTokenClassName;
+        return new $c($tokenId, $value);
     }
 
     /**
@@ -100,7 +103,8 @@ class CSRFTokenManager
 
         $this->storage->setToken($namespacedId, $value);
 
-        return new CSRFToken($tokenId, $value);
+        $c = self::$csrfTokenClassName;
+        return new $c($tokenId, $value);
     }
 
     /**
