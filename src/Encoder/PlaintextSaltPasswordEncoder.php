@@ -26,7 +26,20 @@ namespace Skyline\Security\Encoder;
 
 class PlaintextSaltPasswordEncoder extends PlaintextPasswordEncoder
 {
-    public function encodePassword(string $plain, array &$options = []): string
+	private $salt;
+
+	public function __construct($ignorePasswordCase = false, string $salt = NULL)
+	{
+		parent::__construct($ignorePasswordCase);
+		$this->salt = $salt;
+	}
+
+	protected function getSalt(array &$options = [])
+	{
+		return NULL !== $this->salt ? $this->salt : parent::getSalt($options);
+	}
+
+	public function encodePassword(string $plain, array &$options = []): string
     {
         $this->checkPasswordTooLong($plain);
         $salt = $this->getSalt($options);
