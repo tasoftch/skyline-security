@@ -86,7 +86,9 @@ class AutoLogoutValidatorFactory extends BruteForceByClientIPValidatorFactory
                 public function grantBeforeAuthentication(IdentityInterface $identity, Request $request): bool
                 {
                     try {
-                        return parent::grantBeforeAuthentication($identity, $request);
+                    	if($identity->getReliability() <= IdentityInterface::RELIABILITY_SESSION)
+                        	return parent::grantBeforeAuthentication($identity, $request);
+                    	return true;
                     } catch (FailedAttemptException $exception) {
                         $e = new AutoLogoutException("Session limit reached", 401);
                         $e->setValidator($this);

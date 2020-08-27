@@ -29,13 +29,20 @@ use Skyline\Security\Exception\HiddenUserException;
 
 interface AdvancedUserInterface
 {
+	/**
+	 * If set, this user can not be changed by any admin tool once created. Also the user itself is not able to change.
+	 * The only way is manipulating directly the database.
+	 * @var int
+	 */
+	const OPTION_INTERNAL		= 1<<0;
+
     /**
      * If set, the user won't be able to login anymore.
      * The authentication service will respond with user not found exception
      * @var int
      * @see HiddenUserException
      */
-    const OPTION_HIDDEN         = 1<<0;
+    const OPTION_HIDDEN         = 1<<1;
 
     /**
      * If set, the user also won't be able to login anymore.
@@ -43,14 +50,14 @@ interface AdvancedUserInterface
      * @var int
      * @see BlockedUserException
      */
-    const OPTION_BLOCKED        = 1<<1;
+    const OPTION_BLOCKED        = 1<<2;
 
     /**
      * If set, login also is not possible.
      * The authentication service deactivates an account in case of new membership or during password reset process.
      * @var int
      */
-    const OPTION_DEACTIVATED    = 1<<2;
+    const OPTION_DEACTIVATED    = 1<<3;
 
     public function getOptions(): int;
 }

@@ -57,7 +57,7 @@ class BasicChallenge implements ChallengeInterface
     {
         $response->setStatusCode(401);
         $this->createAuthenticationHeader($response);
-        return true;
+        return false;
     }
 
     /**

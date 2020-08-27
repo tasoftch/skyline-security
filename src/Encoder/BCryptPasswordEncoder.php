@@ -23,6 +23,21 @@ class BCryptPasswordEncoder extends AbstractPasswordEncoder
     const MAX_PASSWORD_LENGTH = 72;
     const OPTION_COST_KEY = 'cost';
 
+    /** @var int Cost ~ 1.5ms */
+    const COST_LOWEST = 4;
+    /** @var int Cost ~ 3ms */
+    const COST_VERY_LOW = 5;
+	/** @var int Cost ~ 10ms */
+	const COST_LOW = 7;
+	/** @var int Cost ~ 30ms */
+	const COST_MEDIUM = 9;
+	/** @var int Cost ~ 250ms */
+	const COST_HIGH = 12;
+	/** @var int Cost ~ 15s */
+	const COST_VERY_HIGH = 18;
+	/** @var int Cost ~ 4h */
+	const COST_HIGHEST = 31;
+
     private $cost;
 
     /**
