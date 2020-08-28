@@ -57,7 +57,7 @@ interface AdvancedUserInterface
      * The authentication service deactivates an account in case of new membership or during password reset process.
      * @var int
      */
-    const OPTION_DEACTIVATED    = 1<<3;
+    const OPTION_DEACTIVATED    = 1<<7;
 
     public function getOptions(): int;
 }
