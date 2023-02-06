@@ -62,6 +62,7 @@ class UserProviderTest extends TestCase
      * @expectedException Skyline\Security\Exception\SecurityException
      */
     public function testInitialUserInvalidUsername() {
+		$this->expectException(\Skyline\Security\Exception\SecurityException::class);
         $ip = new InitialUserProvider("", "admin");
     }
 
@@ -69,6 +70,7 @@ class UserProviderTest extends TestCase
      * @expectedException Skyline\Security\Exception\SecurityException
      */
     public function testInitialUserInvalidCredential() {
+		$this->expectException(\Skyline\Security\Exception\SecurityException::class);
         $ip = new InitialUserProvider("admin", "");
     }
 

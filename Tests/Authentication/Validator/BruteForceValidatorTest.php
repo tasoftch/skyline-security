@@ -67,7 +67,7 @@ class BruteForceValidatorTest extends TestCase
         $identity = new Identity("admin", "121212", 200);
 
         $request = Request::create("/test", "POST", [], [], [], ["REMOTE_ADDR" => '201.66.78.12']);
-
+		$this->expectException(FailedAttemptException::class);
         /** @var CallbackAttemptValidator $val1 */
         foreach($validators as $val1) {
             $this->assertTrue($val1->grantBeforeAuthentication($identity, $request));

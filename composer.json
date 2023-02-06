@@ -13,15 +13,15 @@
     }
   },
   "require" : {
-    "php": "^7.2",
-    "skyline/kernel": "^0.8",
-    "symfony/http-foundation": "^5.0",
+    "php": "^8",
+    "skyline/kernel": "^0.9",
+    "symfony/http-foundation": "^6",
     "tasoft/cached-generator": "^0.9",
     "ext-openssl": "*"
   },
   "require-dev": {
-    "phpunit/phpunit": "^6",
-    "skyline/render": "^0.8"
+    "phpunit/phpunit": "^9",
+    "skyline/render": "^8"
   },
   "suggest": {
     "skyline/render": "Enable client challenges using templates for html forms and HTTP\\POSTFieldsIdentityProvider"

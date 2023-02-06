@@ -44,6 +44,7 @@ use Skyline\Security\Authentication\AuthenticationService;
 use Skyline\Security\Encoder\PasswordEncoderChain;
 use Skyline\Security\Encoder\PlaintextPasswordEncoder;
 use Skyline\Security\Exception\Auth\NoIdentityException;
+use Skyline\Security\Exception\UserNotFoundException;
 use Skyline\Security\Identity\Identity;
 use Skyline\Security\User\AdvancedUser;
 use Skyline\Security\User\Provider\ChainUserProvider;
@@ -58,6 +59,7 @@ class AuthenticationTest extends TestCase
      * @expectedExceptionCode 401
      */
     public function testNoIdentity() {
+		$this->expectException(NoIdentityException::class);
         $auth = new AuthenticationService($ch = new ChainUserProvider(), $pc = new PasswordEncoderChain());
 
         $request = Request::create("/test");
@@ -74,7 +76,7 @@ class AuthenticationTest extends TestCase
         $request = Request::create("/test");
 
         $identity = new Identity("admin", "12345", Identity::RELIABILITY_ANONYMOUS);
-
+		$this->expectException(NoIdentityException::class);
         $auth->authenticateIdentity($identity, $request);
     }
 
@@ -88,7 +90,7 @@ class AuthenticationTest extends TestCase
         $request = Request::create("/test");
 
         $identity = new Identity("admin", "12345", Identity::RELIABILITY_HTTP);
-
+		$this->expectException(UserNotFoundException::class);
         $auth->authenticateIdentity($identity, $request);
     }
 
@@ -103,7 +105,7 @@ class AuthenticationTest extends TestCase
 
         $request = Request::create("/test");
         $identity = new Identity("admin", "12345", Identity::RELIABILITY_HTTP);
-
+		$this->expectException(\Skyline\Security\Exception\Auth\HiddenUserException::class);
         $auth->authenticateIdentity($identity, $request);
     }
 
@@ -118,7 +120,7 @@ class AuthenticationTest extends TestCase
 
         $request = Request::create("/test");
         $identity = new Identity("admin", "12345", Identity::RELIABILITY_HTTP);
-
+		$this->expectException(\Skyline\Security\Exception\Auth\BlockedUserException::class);
         $auth->authenticateIdentity($identity, $request);
     }
 
@@ -133,7 +135,7 @@ class AuthenticationTest extends TestCase
 
         $request = Request::create("/test");
         $identity = new Identity("admin", "12345", Identity::RELIABILITY_HTTP);
-
+		$this->expectException(\Skyline\Security\Exception\Auth\DeactivatedUserException::class);
         $auth->authenticateIdentity($identity, $request);
     }
 
@@ -150,7 +152,7 @@ class AuthenticationTest extends TestCase
 
         $request = Request::create("/test");
         $identity = new Identity("admin", "12345", Identity::RELIABILITY_HTTP);
-
+		$this->expectException(\Skyline\Security\Exception\Auth\WrongPasswordException::class);
         $auth->authenticateIdentity($identity, $request);
     }
 

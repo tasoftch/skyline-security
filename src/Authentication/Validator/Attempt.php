@@ -86,16 +86,26 @@ class Attempt implements \Serializable
 
     public function serialize()
     {
-        return serialize([
-            $this->hash,
-            $this->trials,
-            $this->date->format("Y-m-d G:i:s")
-        ]);
+        return serialize($this->__serialize());
     }
 
     public function unserialize($serialized)
     {
-        list($this->hash, $this->trials, $date) = unserialize($serialized);
-        $this->date = new \DateTime($date);
+        $this->__unserialize( unserialize($serialized) );
     }
+
+	public function __serialize(): array
+	{
+		return [
+			$this->hash,
+			$this->trials,
+			$this->date->format("Y-m-d G:i:s")
+		];
+	}
+
+	public function __unserialize(array $data): void
+	{
+		list($this->hash, $this->trials, $date) = $data;
+		$this->date = new \DateTime($date);
+	}
 }

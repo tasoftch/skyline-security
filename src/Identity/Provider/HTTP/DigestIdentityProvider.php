@@ -68,7 +68,7 @@ class DigestIdentityProvider extends BasicIdentityProvider
     {
         $auth = $request->headers->get("Authorization");
 
-        if(stripos($auth, 'digest') === 0) {
+        if(stripos($auth ?: "", 'digest') === 0) {
             $data = $this->digestParse($auth);
 
             if($data) {

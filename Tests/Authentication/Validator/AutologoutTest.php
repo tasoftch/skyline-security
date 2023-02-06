@@ -72,6 +72,7 @@ class AutologoutTest extends TestCase
         $this->assertTrue($val1->grantBeforeAuthentication($identity, $request));
 
         sleep(2);
+		$this->expectException(AutoLogoutException::class);
         $this->assertTrue($val1->grantBeforeAuthentication($identity, $request));
     }
 }

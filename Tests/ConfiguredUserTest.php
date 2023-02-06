@@ -59,6 +59,7 @@ class ConfiguredUserTest extends TestCase
      * @expectedException \InvalidArgumentException
      */
     public function testInvalidConfiguration() {
+		$this->expectException(\InvalidArgumentException::class);
         $user = new ConfiguredUser([
             // ConfiguredUser::USERNAME_KEY => 'admin',
             ConfiguredUser::CREDENTIALS_KEY => 'test'

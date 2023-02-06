@@ -70,7 +70,7 @@ class BasicIdentityProvider extends AbstractIdentityProvider
     public function yieldIdentities(Request $request): Generator
     {
         $auth = $request->headers->get("Authorization");
-        if(stripos($auth, 'basic') === 0) {
+        if(stripos($auth ?: "", 'basic') === 0) {
             $auth = substr($auth, 6);
             $auth = explode(":", base64_decode($auth), 2);
             if(count($auth) != 2)
