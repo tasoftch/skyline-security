@@ -14,7 +14,7 @@
   },
   "require" : {
     "php": "^8",
-    "skyline/kernel": "^0.9",
+    "skyline/kernel": "^8",
     "symfony/http-foundation": "^6",
     "tasoft/cached-generator": "^0.9",
     "ext-openssl": "*"
