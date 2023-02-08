@@ -43,7 +43,7 @@ class RoleGroup implements RoleGroupInterface, IteratorAggregate
     /** @var RoleInterface[] */
     private $roles = [];
 
-    public function getIterator()
+    public function getIterator(): \Traversable
     {
         return new ArrayIterator($this->roles);
     }
